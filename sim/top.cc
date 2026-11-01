@@ -16,6 +16,26 @@ using namespace std;
 #include "test-modules/signals-axilite.h"
 
 #include "Vaccel.h"
+#if VM_TRACE
+#include <csignal>
+#include <unistd.h>
+#include "verilated_vcd_sc.h"
+
+/* run.sh ends the sim with SIGTERM; flush the VCD before exiting */
+static VerilatedVcdSc *tfp;
+static void close_trace(void)
+{
+	if (tfp) {
+		tfp->close();
+		tfp = NULL;
+	}
+}
+static void close_trace_sig(int sig)
+{
+	close_trace();
+	_exit(0);
+}
+#endif
 
 #define ADDR_W 8
 
@@ -87,7 +107,25 @@ int sc_main(int argc, char *argv[])
 	uint64_t q = argc > 2 ? strtoull(argv[2], NULL, 10) : 10000;
 
 	sc_set_time_resolution(1, SC_PS);
-	new Top("top", argv[1], sc_time((double) q, SC_NS));
+#if VM_TRACE
+	Verilated::traceEverOn(true);
+#endif
+	Top *top = new Top("top", argv[1], sc_time((double) q, SC_NS));
+#if VM_TRACE
+	sc_start(SC_ZERO_TIME);
+	tfp = new VerilatedVcdSc;
+	top->accel.trace(tfp, 99);
+	tfp->open("accel.vcd");
+	atexit(close_trace);
+	signal(SIGINT, close_trace_sig);
+	signal(SIGTERM, close_trace_sig);
+
+	/* QEMU keeps sim time running while idle; only dump the first VCD_US */
+	const char *us = getenv("VCD_US");
+	sc_start(sc_time(us ? atof(us) : 1000, SC_US));
+	close_trace();
+	cout << "VCD closed: accel.vcd" << endl;
+#endif
 	sc_start();
 	return 0;
 }

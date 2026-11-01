@@ -94,6 +94,7 @@
           gcc-arm-embedded
           gnumake
           dtc
+          gtkwave
         ];
         LIBSOC = "${libsoc}";
         SYSTEMC_HOME = "${pkgs.systemc}";

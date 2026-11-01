@@ -4,12 +4,18 @@ SYSTEMC_HOME ?= $(error SYSTEMC_HOME not set)
 VERILATOR    ?= verilator
 VROOT        := $(shell $(VERILATOR) --getenv VERILATOR_ROOT)
 OBJ          := obj_dir
+VM_TRACE     ?= 1
 
 CFLAGS   += -O2 -g
 CXXFLAGS += -std=c++17 -O2 -g
 CPPFLAGS += -I$(SYSTEMC_HOME)/include -I$(OBJ) -I$(VROOT)/include -I$(VROOT)/include/vltstd \
             -I$(LIBSOC) -I$(LIBSOC)/libremote-port -I$(LIBSOC)/soc/xilinx/zynq \
             -I$(LIBSOC)/tests -I$(LIBSOC)/tests/test-modules
+ifeq ($(VM_TRACE),1)
+VFLAGS   += --trace
+CPPFLAGS += -DVM_TRACE=1
+endif
+
 LDLIBS   += -L$(SYSTEMC_HOME)/lib -Wl,-rpath,$(SYSTEMC_HOME)/lib -lsystemc -pthread
 
 LIBSOC_SRCS = \
@@ -42,7 +48,7 @@ build:
 
 $(VACCEL): ../rtl/accel.sv
 	SYSTEMC_INCLUDE=$(SYSTEMC_HOME)/include SYSTEMC_LIBDIR=$(SYSTEMC_HOME)/lib \
-	$(VERILATOR) --sc --pins-bv 2 --build -j 0 --Mdir $(OBJ) \
+	$(VERILATOR) --sc --pins-bv 2 --build -j 0 --Mdir $(OBJ) $(VFLAGS) \
 		-CFLAGS -std=c++17 $<
 
 clean:
