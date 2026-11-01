@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "libsoc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782458560,
+        "narHash": "sha256-/ehRTkWF0iRfI/WfE5HlTUx3b/bCY2bPsXPHj/x//7w=",
+        "owner": "Xilinx",
+        "repo": "libsystemctlm-soc",
+        "rev": "788e8b24b5d658780a55e97511082b1540fe92ab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Xilinx",
+        "repo": "libsystemctlm-soc",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1793341285,
+        "narHash": "sha256-Y1CiZ4SoBUjLQyQM/pY+rS2dXD3CHLPstF0lmOc73D4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1c89083e451e891152365b799595cf7790a43325",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "libsoc": "libsoc",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

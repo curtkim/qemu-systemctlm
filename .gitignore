@@ -1,0 +1,5 @@
+result*
+fw/fw.elf
+sim/obj_dir/
+sim/build/
+sim/top
