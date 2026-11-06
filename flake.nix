@@ -7,12 +7,26 @@
       url = "github:Xilinx/libsystemctlm-soc";
       flake = false;
     };
+    # Vivado/Vitis 2025.1 (installer must be in the store: see README)
+    xlnx-utils.url = "github:DLR-FT/xilinx-nix-utils/570a1398611cf3203f98f83599a0e44e9ad5fc93";
+    # Digilent board files (Zybo Z7-20 PS7 preset: DDR, MIO, UART1)
+    digilent-boards = {
+      url = "github:Digilent/vivado-boards";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, libsoc }:
+  outputs = { self, nixpkgs, libsoc, xlnx-utils, digilent-boards }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+
+      # use xlnx-utils' own nixpkgs so the already-built Vivado is reused
+      xilinx-unified = (import xlnx-utils.inputs.nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [ xlnx-utils.overlays.xilinx-unified ];
+      }).xilinx-unified;
 
       qemuSub = name: rev: hash: pkgs.fetchgit {
         url = "https://gitlab.com/qemu-project/${name}.git";
@@ -84,7 +98,7 @@
       '';
     in
     {
-      packages.${system} = { inherit qemu-xilinx cosim-dtb; };
+      packages.${system} = { inherit qemu-xilinx cosim-dtb xilinx-unified; };
 
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
@@ -95,10 +109,12 @@
           gnumake
           dtc
           gtkwave
+          xilinx-unified  # last: its bin/ also ships dtc, ninja, ...
         ];
         LIBSOC = "${libsoc}";
         SYSTEMC_HOME = "${pkgs.systemc}";
         COSIM_DTB = "${cosim-dtb}/zybo-cosim.dtb";
+        DIGILENT_BOARDS = "${digilent-boards}/new/board_files";
       };
     };
 }

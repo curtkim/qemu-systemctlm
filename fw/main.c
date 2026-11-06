@@ -25,6 +25,8 @@
 #define GICC_EOIR  REG(GICC_BASE + 0x10)
 #define GICD_CTLR  REG(GICD_BASE + 0x000)
 #define GICD_ISENABLER(n) REG(GICD_BASE + 0x100 + 4 * (n))
+#define GICD_ICENABLER(n) REG(GICD_BASE + 0x180 + 4 * (n))
+#define GICD_ICPENDR(n)   REG(GICD_BASE + 0x280 + 4 * (n))
 #define GICD_IPRIORITYR8(n) (*(volatile uint8_t *)(GICD_BASE + 0x400 + (n)))
 #define GICD_ITARGETSR8(n)  (*(volatile uint8_t *)(GICD_BASE + 0x800 + (n)))
 
@@ -75,6 +77,11 @@ void irq_handler(void)
 static void gic_init(void)
 {
 	GICD_CTLR = 0;
+	/* drop whatever an earlier boot (e.g. QSPI image) left enabled/pending */
+	for (int n = 0; n < 3; n++) {
+		GICD_ICENABLER(n) = ~0u;
+		GICD_ICPENDR(n) = ~0u;
+	}
 	GICD_IPRIORITYR8(ACC_IRQ_ID) = 0xA0;
 	GICD_ITARGETSR8(ACC_IRQ_ID) = 0x01;
 	GICD_ISENABLER(ACC_IRQ_ID / 32) = 1u << (ACC_IRQ_ID % 32);
