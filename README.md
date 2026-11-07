@@ -3,9 +3,9 @@
 QEMU(firmware) - remote_port - systemC(verilator)
 ```
 
-## PS(firmware)-PL
+## PS(firmware) - PL
 
-## PS(linux)-PL
+## PS(linux) - PL
 ```
 Vivado(board/build.tcl) → XSA → xsct(board/gendt.tcl) → board/gendt → nixos-xlnx → sdImage
 accel: DT overlay(linux/system-user.dts)로 generic-uio → /dev/uio0 → accel-test
