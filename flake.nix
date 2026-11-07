@@ -14,9 +14,16 @@
       url = "github:Digilent/vivado-boards";
       flake = false;
     };
+    # XSA -> Linux device tree (hsi), matched to Vivado 2025.1
+    device-tree-xlnx = {
+      url = "github:Xilinx/device-tree-xlnx/xilinx_v2025.1";
+      flake = false;
+    };
+    # NixOS for Zynq: FSBL + bitstream + u-boot -> BOOT.BIN, sdImage
+    nixos-xlnx.url = "github:chuangzhu/nixos-xlnx/8bb30b706ad4f89ecc92f6ce6f5b19de86cc19d1";
   };
 
-  outputs = { self, nixpkgs, libsoc, xlnx-utils, digilent-boards }:
+  outputs = { self, nixpkgs, libsoc, xlnx-utils, digilent-boards, device-tree-xlnx, nixos-xlnx }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -98,7 +105,19 @@
       '';
     in
     {
-      packages.${system} = { inherit qemu-xilinx cosim-dtb xilinx-unified; };
+      packages.${system} = {
+        inherit qemu-xilinx cosim-dtb xilinx-unified;
+        sdImage = self.nixosConfigurations.zybo.config.system.build.sdImage;
+        boot-bin = self.nixosConfigurations.zybo.config.system.build.bootBin;
+      };
+
+      # Zybo Z7-20 Linux (PL accel via UIO): nix build .#sdImage
+      nixosConfigurations.zybo = nixos-xlnx.inputs.nixpkgs.lib.nixosSystem {
+        modules = [
+          nixos-xlnx.nixosModules.sd-image
+          ./linux/configuration.nix
+        ];
+      };
 
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
@@ -115,6 +134,7 @@
         SYSTEMC_HOME = "${pkgs.systemc}";
         COSIM_DTB = "${cosim-dtb}/zybo-cosim.dtb";
         DIGILENT_BOARDS = "${digilent-boards}/new/board_files";
+        DEVICE_TREE_XLNX = "${device-tree-xlnx}";
       };
     };
 }

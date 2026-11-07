@@ -1,0 +1,21 @@
+// Board-level additions to the XSA-generated DT (PetaLinux system-user.dtsi)
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "xlnx,zynq-7000";
+};
+
+// accel (0x40000000, IRQ_F2P[0]) -> userspace via uio_pdrv_genirq
+&accel {
+	compatible = "generic-uio";
+};
+
+// Ethernet PHY (RTL8211F, MDIO addr 0)
+&gem0 {
+	phy-handle = <&ethernet_phy>;
+
+	ethernet_phy: ethernet-phy@0 {
+		reg = <0>;
+	};
+};

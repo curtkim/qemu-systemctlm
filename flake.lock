@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "device-tree-xlnx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747285971,
+        "narHash": "sha256-rj/POzuH1GX6R6K5ipnu/8Bad0Y6iYhnnW6AjkUaFpw=",
+        "owner": "Xilinx",
+        "repo": "device-tree-xlnx",
+        "rev": "3d2eaf1d5fbbdfeb09f288362dab3888c671522f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Xilinx",
+        "ref": "xilinx_v2025.1",
+        "repo": "device-tree-xlnx",
+        "type": "github"
+      }
+    },
     "devshell": {
       "inputs": {
         "nixpkgs": [
@@ -53,7 +70,42 @@
         "type": "github"
       }
     },
+    "nixos-xlnx": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1778318270,
+        "narHash": "sha256-yyTsxI7o0vjVjdvYINRdpW94pVKcpcs8yGM6P3n1MQ4=",
+        "owner": "chuangzhu",
+        "repo": "nixos-xlnx",
+        "rev": "8bb30b706ad4f89ecc92f6ce6f5b19de86cc19d1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "chuangzhu",
+        "repo": "nixos-xlnx",
+        "rev": "8bb30b706ad4f89ecc92f6ce6f5b19de86cc19d1",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1769089682,
+        "narHash": "sha256-9yA/LIuAVQq0lXelrZPjLuLVuZdm03p8tfmHhnDIkms=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "078d69f03934859a181e81ba987c2bb033eebfc5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1793341285,
         "narHash": "sha256-Y1CiZ4SoBUjLQyQM/pY+rS2dXD3CHLPstF0lmOc73D4=",
@@ -69,7 +121,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1759580034,
         "narHash": "sha256-YWo57PL7mGZU7D4WeKFMiW4ex/O6ZolUS6UNBHTZfkI=",
@@ -87,9 +139,11 @@
     },
     "root": {
       "inputs": {
+        "device-tree-xlnx": "device-tree-xlnx",
         "digilent-boards": "digilent-boards",
         "libsoc": "libsoc",
-        "nixpkgs": "nixpkgs",
+        "nixos-xlnx": "nixos-xlnx",
+        "nixpkgs": "nixpkgs_2",
         "xlnx-utils": "xlnx-utils"
       }
     },
@@ -117,7 +171,7 @@
     "xlnx-utils": {
       "inputs": {
         "devshell": "devshell",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "treefmt": "treefmt"
       },
       "locked": {
