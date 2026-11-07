@@ -6,9 +6,10 @@
 	compatible = "xlnx,zynq-7000";
 };
 
-// accel (0x40000000, IRQ_F2P[0]) -> userspace via uio_pdrv_genirq
+// accel (0x40000000, IRQ_F2P[0]): bound to uio_pdrv_genirq at boot (/dev/uio0),
+// accel-ko-test rebinds it to accel.ko (/dev/accel, linux-device-driver/)
 &accel {
-	compatible = "generic-uio";
+	compatible = "xlnx,accel-axi-1.0", "generic-uio";
 };
 
 // Ethernet PHY (RTL8211F, MDIO addr 0)

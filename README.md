@@ -20,7 +20,10 @@ zstdcat result-sd/sd-image/*.img.zst | sudo dd of=/dev/sdX bs=4M status=progress
 ```
 JP5 → SD, UART `/dev/ttyUSB1` 115200, `root` / `nixos`
 ```sh
-accel-test        # TEST PASS
+accel-test        # UIO (/dev/uio0)                  → TEST PASS
+accel-ko-test     # accel.ko (/dev/accel, ioctl)     → TEST PASS
 ```
+`accel-ko-test`는 부팅 때 `uio_pdrv_genirq`에 붙은 장치를 `accel.ko`(linux-device-driver/)로 옮긴 뒤 테스트한다.
+이후 `accel-test`(UIO)를 다시 쓰려면 재부팅.
 
 

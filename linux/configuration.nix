@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }:
 let
   accel-test = pkgs.writeCBin "accel-test" (builtins.readFile ./accel-test.c);
+  # accel.ko + accel-ko-test (../linux-device-driver)
+  accel-drv = config.boot.kernelPackages.callPackage ../linux-device-driver { };
 in
 {
   # no armv7l binary cache: cross build from x86_64
@@ -51,7 +53,8 @@ in
     settings.PermitRootLogin = "yes";
   };
 
-  environment.systemPackages = [ accel-test ];
+  boot.extraModulePackages = [ accel-drv.module ];
+  environment.systemPackages = [ accel-test accel-drv.test ];
 
   system.build.bootBin = config.hardware.zynq.boot-bin;
 
